@@ -1,127 +1,223 @@
-# 🏁 Projeto Final: KImóveis - TypeORM com Relacionamentos
+# Real Estate Agency API
 
-Para inciar este projeto, é necessário instalar as dependências, que serão utilizadas nos testes. Portanto utilize o comando abaixo para instalar tais dependências:
+This API provides functionality for a real estate agency, allowing users to register properties, users, schedule visits, and list properties by specific categories.
 
-```bash
-# caso use npm
-npm run i
+## Getting Started
 
-# caso use yarn
-yarn
+### Prerequisites
+
+Before running the project, make sure you have the following prerequisites installed:
+
+- [Node.js](https://nodejs.org) installed on your machine.
+- [npm](https://www.npmjs.com/) or [Yarn](https://yarnpkg.com/) package manager.
+- [PostgreSQL](https://www.postgresql.org/) database installed and running.
+
+## Installation
+
+1. Clone the repository:
+
+   ```
+   git clone git@github.com:drmatheus/real-estate-agency-API.git
+   ```
+
+2. Navigate to the project directory:
+
+   ```
+   cd real-estate-agency-API
+   ```
+
+3. Install the dependencies:
+
+   ```
+   npm install
+   ```
+
+   or
+
+   ```
+   yarn install
+   ```
+
+## Database Setup
+
+1. Create a new PostgreSQL database for the project.
+
+2. Configure the database connection in the .env file.
+
+3. Run the database migrations:
+   ```
+   npm run typeorm migration:run -d ./src/data-source
+   ```
+   or
+   ```
+   yarn typeorm migration:run -d ./src/data-source
+   ```
+
+## Running the Project
+
+To start the project locally, run the following command:
+
+```
+yarn dev
 ```
 
-## Instalação
+or
 
-Apenas as bibliotecas de teste, ou que os testes dependem, estão no **package.json**. Por isso, instale as dependências do projeto manualmente e não se esqueça de inicia-lo também.
-
-```bash
-# caso use npm
-npm init -y
-
-# caso use yarn
-yarn init -y
+```
+npm run dev
 ```
 
-## Dependências dos testes
+The API will be accessible at http://localhost:3000.
 
-Para que os testes funcionem corretamente, existem algumas dependências.
+## Usage
 
-* O `app` tem que ser exportado como **default** em **src/app.ts**. Exemplo:
+### **List Users**
 
-```ts
-export default app
-```
+GET /users
 
-* O `AppDataSource` tem que ser exportado em **src/data-source.ts**. Exemplo:
+> Description: List all users.
+>
+> Authentication: Required.
 
-```ts
-export { AppDataSource }
+### **Retrieve User Data**
 
-// ou
+GET /users/:id
 
-export const AppDataSource = new DataSource(dataSourceConfig());
-```
+> Description: Retrieve user data by ID.
+>
+> Authentication: Required.
 
-* As Entities **tem que ter os respectivos nomes** e **tem que ter a exportação centralizada** em **entities/index.ts**. Exemplo:
+### **Create a New User**
 
-```ts
-import { Address } from './<arquivo>';
-import { Category } from './<arquivo>';
-import { RealEstate } from './<arquivo>';
-import { Schedule } from './<arquivo>';
-import { User } from './<arquivo>';
+POST /users
 
-export { Address, RealEstate, Category, User, Schedule };
-```
+> Description: Create a new user.
+>
+> Authentication: Not required.
+>
+> Request Body:
 
-## Sobre os testes
+        {
+        "name": "John Doe",
+        "email": "johndoe@example.com",
+        "password": "secretpassword123",
+        "admin": true
+        }
 
-Essa aplicação possui testes, que serão utilizados para validar, se todas as regras de negócio foram aplicadas de maneira correta.
+### **Update User Data**
 
-Os testes estão localizados em `src/__tests__`.
+PATCH /users/:id
 
-Na subpasta `integration` estão os testes.
+> Description: Update user data.
+>
+> Authentication: Required.
+>
+> Request Body:
 
-Já na subpasta `mocks` estão os dados que serão utilizados para os testes.
+        {
+        "name": "Updated Name"
+        }
 
-No arquivo `jest.config.ts` estão algumas configurações necessárias para os testes rodarem.
+### **Delete User**
 
-**`De modo algum altere qualquer um desses arquivos.`** Isso poderá comprometer a integridade dos testes.
+DELETE /users/:id
 
-E também não altere o script de `test` localizado no `package.json`. Isso será utilizado para rodar os testes.
+> Description: Delete a user.
+>
+> Authentication: Required.
 
-## Rodando os testes
+### **List Real Estates**
 
-Para rodar os testes é necessário que no seu terminal, você esteja dentro do diretório do projeto.
+GET /realEstate
 
-Estando no terminal e dentro do caminho correto, você poderá utilizar os comandos a seguir:
+> Description: List all real estates.
+>
+> Authentication: Not required.
 
-### Rodar todos os testes
+### **Create a New Real Estate**
 
-```bash
-# caso use npm
-npm run test
+POST /realEstate
 
-# caso use yarn
-yarn test
-```
+> Description: Create a new real estate.
+>
+> Authentication: Required.
+>
+> Request Body:
 
-### Rodar todos os testes e ter um log ainda mais completo
+        {
+            "sold": false,
+            "value": 250000,
+            "size": 150,
+            "address": {
+                "street": "Main Street",
+                "zipCode": "12345",
+                "number": "123",
+                "city": "Exampleville",
+                "state": "EX"
+            },
+            "categoryId": optional
+        }
 
-```bash
-# caso use npm
-npm run test --all
+### **Retrieve Real Estate Data**
 
-# caso use yarn
-yarn test --all
-```
+GET /realEstate/:id
 
-### Rodar os testes de uma pasta específica
+> Description: Retrieve real estate data by ID.
+>
+> Authentication: Not required.
 
-> detalhe: repare que tests está envolvido por 2 underlines. Isso se chama ***dunder***.
+### **Schedule a Visit**
 
-```bash
-# caso use npm
-npm run test <subpasta>
+POST /schedules
 
-# caso use yarn
-yarn test <subpasta>
-```
+> Description: Schedule a visit for a real estate.
+>
+> Authentication: Required.
+>
+> Request Body:
 
-### Rodar os testes de um arquivo específico
+        {
+        "realEstateId": "123456",
+        "date": "2023-06-25",
+        "time": "10:00"
+        }
 
-```bash
-# caso use npm
-npm run test <subpasta>/<arquivo>
+### **Get Schedules for a Real Estate**
 
-# caso use yarn
-yarn test <subpasta>/<arquivo>
-```
+GET /schedules/realEstate/:id
 
-**Caso você queira verificar todas as opções de execução de testes, visite a [Documentação oficial do Jest](https://jestjs.io/docs/cli)**
+> Description: Get schedules for a specific real estate.
+>
+> Authentication: Required.
 
-Após rodar um dos comandos aparecerá um log no seu terminal, contendo as informações da execução do teste.
+### **Get Real Estate by Category**
 
-**Observação:** O teste pode demorar alguns segundos para ser finalizado. Quanto maior for o teste, mais tempo será consumido para a execução.
+GET /categories/:id/realEstate
 
-### Agora que já sabe como iniciar o seu projeto e rodar os testes, é hora de colocar a mão no código
+> Description: Get all real estate properties belonging to a specific category based on the category ID.
+>
+> Authentication: Not required.
+
+### **Get All Categories**
+
+GET /categories
+
+> Description: Get all categories of real estate properties.
+>
+> Authentication: None required.
+
+### **Create Category**
+
+POST /categories
+
+> Description: Create a new category for real estate properties.
+>
+> Authentication: Required.
+>
+> Request Body:
+
+        {
+        "name": "Apartment"
+        }
+
+**_Note: Routes that require authentication need to include valid authentication credentials, such as a token or session, in the request headers._**
